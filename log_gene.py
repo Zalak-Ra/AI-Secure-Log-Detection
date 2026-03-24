@@ -1,6 +1,7 @@
 import random
 import time
 import json
+import datetime
 from kafka import KafkaProducer
 
 producer = KafkaProducer(
@@ -70,7 +71,7 @@ while True:
 
     # 5. The Final Payload
     logs = {
-        "timestamp": time.time(),    
+        "timestamp": datetime.datetime.now().strftime("%d-%m-%y %H:%M:%S"),    
         "machine": random.choice(machine_id),        
         "cpu_usage": round(cpu_val, 2),
         "gpu_wrk_util": round(gpu_val, 2),

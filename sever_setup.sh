@@ -4,6 +4,10 @@
 echo "Installing any necessary packages..."
 pip install kafka-python pyspark > /dev/null 2>&1
 
+.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+
+.\bin\windows\kafka-server-start.bat .\config\server.properties
+
 # Stop prior instances if any
 pkill -f log_gene.py
 pkill -f spark.py
