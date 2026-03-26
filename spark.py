@@ -13,7 +13,7 @@ df = spark.readStream \
     .load()
 
 schema = StructType([
-    StructField("timestamp", DoubleType(), True),
+    StructField("timestamp", StringType(), True),
     StructField("machine", StringType(), True),
 
     StructField("cpu_usage", DoubleType(), True),

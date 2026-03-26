@@ -1,4 +1,6 @@
 live_data.csv
 .venv_tf/
 biglog/
+test_logs.txt
+test_verification.txt
 
