@@ -3,4 +3,10 @@ live_data.csv
 biglog/
 test_logs.txt
 test_verification.txt
+logs/
+.venv/
+.ipynb_checkpoints/
+__pycache__/
+*.keras
+*.h5
 

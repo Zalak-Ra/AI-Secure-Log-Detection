@@ -13,7 +13,7 @@ df = spark.readStream \
     .load()
 
 schema = StructType([
-    StructField("timestamp", StringType(), True),
+    StructField("timestamp", DoubleType(), True),
     StructField("machine", StringType(), True),
 
     StructField("cpu_usage", DoubleType(), True),
@@ -40,6 +40,7 @@ parsed_df = df.select(from_json(col("value").cast("string"), schema).alias("data
 query = parsed_df.writeStream \
     .outputMode("append") \
     .format("console") \
+    .option("truncate", "false") \
     .start()
 
 query.awaitTermination()

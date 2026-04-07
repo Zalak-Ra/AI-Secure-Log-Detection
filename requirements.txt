@@ -1,0 +1,8 @@
+kafka-python
+pyspark
+pandas
+numpy
+scikit-learn
+tensorflow
+jupyter
+matplotlib
