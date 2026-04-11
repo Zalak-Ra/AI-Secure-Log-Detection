@@ -16,3 +16,4 @@ data/checkpoints/
 data/feature_windows_stream/
 models/failure_predictor/
 model.ipynb
+.plots
