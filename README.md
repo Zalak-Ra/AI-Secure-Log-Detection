@@ -191,10 +191,6 @@ curl -X PUT "http://localhost:9200/_index_template/infra_predictions" -H "Conten
 curl -X PUT "http://localhost:9200/_index_template/infra_feature_windows" -H "Content-Type: application/json" --data-binary "@elastic/feature-windows-template.json"
 ```
 
-### Phase 7. Build Kibana dashboards and alerts
-
-Use the guidance in [kibana/README.md](./kibana/README.md).
-
 ## Modeling Notes
 
 - Sequence length: `20` timesteps
