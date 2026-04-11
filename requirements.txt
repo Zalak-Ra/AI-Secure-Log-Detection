@@ -1,8 +1,8 @@
-kafka-python
-pyspark
-pandas
-numpy
-scikit-learn
-tensorflow
+kafka-python>=2.0
+pyspark>=3.5
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.4
+tensorflow>=2.15; python_version < "3.12"
 jupyter
 matplotlib

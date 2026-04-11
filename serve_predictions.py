@@ -1,4 +1,4 @@
-from apps.generate_logs import main
+from apps.serve_predictions import main
 
 
 if __name__ == "__main__":

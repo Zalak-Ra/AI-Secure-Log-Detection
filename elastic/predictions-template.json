@@ -1,0 +1,34 @@
+{
+  "index_patterns": ["logs-infra_predictions-*"],
+  "data_stream": {},
+  "priority": 500,
+  "template": {
+    "settings": {
+      "index.default_pipeline": ""
+    },
+    "mappings": {
+      "dynamic": true,
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "machine_id": { "type": "keyword" },
+        "cluster_id": { "type": "keyword" },
+        "role": { "type": "keyword" },
+        "window_start": { "type": "date" },
+        "window_end": { "type": "date" },
+        "p_fail_5m": { "type": "float" },
+        "risk_band": { "type": "keyword" },
+        "predicted_failure_type": { "type": "keyword" },
+        "alert_fired": { "type": "boolean" },
+        "threshold": { "type": "float" },
+        "model_version": { "type": "keyword" },
+        "missing_ratio": { "type": "float" },
+        "cpu_pct_mean": { "type": "float" },
+        "mem_pct_mean": { "type": "float" },
+        "latency_p95_ms_mean": { "type": "float" },
+        "error_count_sum": { "type": "float" },
+        "queue_depth_mean": { "type": "float" },
+        "net_retransmit_pct_mean": { "type": "float" }
+      }
+    }
+  }
+}

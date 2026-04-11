@@ -1,0 +1,41 @@
+{
+  "index_patterns": ["logs-infra_feature_windows-*"],
+  "data_stream": {},
+  "priority": 500,
+  "template": {
+    "mappings": {
+      "dynamic": true,
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "window_start": { "type": "date" },
+        "window_end": { "type": "date" },
+        "machine_id": { "type": "keyword" },
+        "cluster_id": { "type": "keyword" },
+        "role": { "type": "keyword" },
+        "cpu_pct_mean": { "type": "float" },
+        "cpu_pct_max": { "type": "float" },
+        "mem_pct_mean": { "type": "float" },
+        "mem_pct_max": { "type": "float" },
+        "gpu_util_pct_mean": { "type": "float" },
+        "gpu_mem_pct_mean": { "type": "float" },
+        "disk_used_pct_mean": { "type": "float" },
+        "disk_io_wait_pct_mean": { "type": "float" },
+        "disk_io_wait_pct_max": { "type": "float" },
+        "net_rx_bytes_sum": { "type": "long" },
+        "net_tx_bytes_sum": { "type": "long" },
+        "net_retransmit_pct_mean": { "type": "float" },
+        "request_rate_mean": { "type": "float" },
+        "latency_p95_ms_mean": { "type": "float" },
+        "latency_p95_ms_max": { "type": "float" },
+        "error_count_sum": { "type": "float" },
+        "queue_depth_mean": { "type": "float" },
+        "restart_count_sum": { "type": "float" },
+        "heartbeat_ok_mean": { "type": "float" },
+        "event_count": { "type": "integer" },
+        "missing_ratio": { "type": "float" },
+        "gt_phase_code_max": { "type": "integer" },
+        "gt_is_failure_now_max": { "type": "integer" }
+      }
+    }
+  }
+}

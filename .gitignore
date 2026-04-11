@@ -1,5 +1,6 @@
 live_data.csv
 .venv_tf/
+.venv311/
 biglog/
 test_logs.txt
 test_verification.txt
@@ -9,4 +10,9 @@ logs/
 __pycache__/
 *.keras
 *.h5
+data/*.jsonl
+data/*.json
+data/checkpoints/
+data/feature_windows_stream/
+models/failure_predictor/
 

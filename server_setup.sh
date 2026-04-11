@@ -2,7 +2,10 @@
 set -euo pipefail
 
 KAFKA_HOME="${KAFKA_HOME:-$PWD/kafka}"
-TOPIC="${TOPIC:-server_logs}"
+RAW_TOPIC="${RAW_TOPIC:-infra.raw.metrics}"
+FEATURE_TOPIC="${FEATURE_TOPIC:-infra.feature.windows}"
+PREDICTION_TOPIC="${PREDICTION_TOPIC:-infra.predictions}"
+DEAD_LETTER_TOPIC="${DEAD_LETTER_TOPIC:-infra.dlq}"
 LOG_DIR="${LOG_DIR:-$PWD/logs}"
 
 if [[ ! -x "$KAFKA_HOME/bin/zookeeper-server-start.sh" ]]; then
@@ -38,14 +41,16 @@ for _ in {1..30}; do
   sleep 2
 done
 
-"$KAFKA_HOME/bin/kafka-topics.sh" \
-  --bootstrap-server localhost:9092 \
-  --create \
-  --if-not-exists \
-  --topic "$TOPIC" \
-  --partitions 1 \
-  --replication-factor 1
+for topic in "$RAW_TOPIC" "$FEATURE_TOPIC" "$PREDICTION_TOPIC" "$DEAD_LETTER_TOPIC"; do
+  "$KAFKA_HOME/bin/kafka-topics.sh" \
+    --bootstrap-server localhost:9092 \
+    --create \
+    --if-not-exists \
+    --topic "$topic" \
+    --partitions 3 \
+    --replication-factor 1
+done
 
 echo "Kafka is running. Logs: $LOG_DIR"
-echo "Topic ready: $TOPIC"
+echo "Topics ready: $RAW_TOPIC, $FEATURE_TOPIC, $PREDICTION_TOPIC, $DEAD_LETTER_TOPIC"
 wait "$KAFKA_PID"
