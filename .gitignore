@@ -16,3 +16,5 @@ data/checkpoints/
 data/feature_windows_stream/
 models/failure_predictor/
 /plots
+*.pyc
+.pycache_tmp/

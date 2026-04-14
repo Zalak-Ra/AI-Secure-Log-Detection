@@ -1,5 +1,5 @@
 kafka-python>=2.0
-pyspark>=3.5
+pyspark>=3.5,<4.0
 pandas>=2.2
 numpy>=1.26
 scikit-learn>=1.4

@@ -116,7 +116,7 @@ def flatten_sequences(x):
 
 def train_sklearn_baseline(x_train, y_train, x_val, y_val):
     import numpy as np
-    from sklearn.ensemble import HistGradientBoostingClassifier
+    from sklearn.ensemble import GradientBoostingClassifier
 
     flat_train = flatten_sequences(x_train)
     flat_val = flatten_sequences(x_val)
@@ -125,9 +125,11 @@ def train_sklearn_baseline(x_train, y_train, x_val, y_val):
     pos_weight = min(20.0, max(1.0, negative / max(1, positive)))
     sample_weight = np.where(y_train == 1, pos_weight, 1.0)
 
-    model = HistGradientBoostingClassifier(
+    # Keep the fallback baseline single-process so it remains usable in
+    # constrained Windows environments where worker-pool creation can fail.
+    model = GradientBoostingClassifier(
         max_depth=6,
-        max_iter=250,
+        n_estimators=250,
         learning_rate=0.05,
         random_state=42,
     )
@@ -196,6 +198,7 @@ def train_and_save(
     except RuntimeError:
         tf = None
         backend = "sklearn_flattened_baseline"
+        print("TensorFlow is unavailable; training the sklearn flattened baseline instead.")
 
     if backend == "tensorflow":
         model = build_lstm_classifier(x_train.shape[1], x_train.shape[2])

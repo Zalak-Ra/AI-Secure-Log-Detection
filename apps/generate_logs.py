@@ -69,6 +69,15 @@ def main() -> None:
 
     start_time = datetime.now(timezone.utc)
     batch: list[dict[str, object]] = []
+    generated_events = 0
+    persisted_events = 0
+    print(
+        "Starting telemetry generation: "
+        f"hosts={args.host_count}, tick_seconds={args.tick_seconds}, "
+        f"steps={'endless' if args.steps is None else args.steps}, "
+        f"kafka={'disabled' if args.no_kafka else args.bootstrap_servers}, "
+        f"history={args.history_path}"
+    )
     try:
         for event in simulator.iter_events(
             start_time=start_time,
@@ -77,21 +86,33 @@ def main() -> None:
         ):
             validate_event_payload(event)
             batch.append(event)
+            generated_events += 1
             if producer is not None:
                 producer.send(args.topic, event)
             if len(batch) >= max(1, args.host_count):
                 append_jsonl(batch, args.history_path)
+                persisted_events += len(batch)
                 batch.clear()
                 if producer is not None:
                     producer.flush()
+                if generated_events % max(1000, args.host_count * 20) == 0:
+                    print(
+                        f"Generated {generated_events} events "
+                        f"and persisted {persisted_events} to {args.history_path}"
+                    )
             if args.steps is not None and not args.fast:
                 time.sleep(0.0)
     finally:
         if batch:
             append_jsonl(batch, args.history_path)
+            persisted_events += len(batch)
         if producer is not None:
             producer.flush()
             producer.close()
+        print(
+            f"Finished telemetry generation with {generated_events} events "
+            f"written to {args.history_path}"
+        )
 
 
 if __name__ == "__main__":

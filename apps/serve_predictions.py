@@ -30,6 +30,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--feature-file", type=Path, default=None)
     parser.add_argument("--output-file", type=Path, default=DEFAULT_FEATURE_HISTORY_PATH.parent / "predictions.jsonl")
     parser.add_argument("--stdout-only", action="store_true")
+    parser.add_argument("--quiet", action="store_true", help="Suppress per-event JSON output and print only summaries.")
     return parser.parse_args()
 
 
@@ -73,15 +74,26 @@ def create_kafka_clients(bootstrap_servers: str, feature_topic: str, prediction_
 def main() -> None:
     args = parse_args()
     predictor = OnlinePredictor(args.model_dir)
+    processed_events = 0
+    emitted_predictions = 0
 
     if args.feature_file is not None:
+        print(f"Scoring feature windows from {args.feature_file} using model {args.model_dir}")
         for event in iter_feature_events(args.feature_file):
+            processed_events += 1
             prediction = predictor.process_bucket_event(event)
             if prediction is None:
                 continue
-            print(json.dumps(prediction))
+            if not args.quiet:
+                print(json.dumps(prediction))
             if not args.stdout_only:
                 append_jsonl(args.output_file, prediction)
+            emitted_predictions += 1
+        print(
+            f"Processed {processed_events} feature windows and emitted "
+            f"{emitted_predictions} predictions"
+            + ("" if args.stdout_only else f" to {args.output_file}")
+        )
         return
 
     consumer, producer, prediction_topic = create_kafka_clients(
@@ -89,21 +101,33 @@ def main() -> None:
         args.feature_topic,
         args.prediction_topic,
     )
+    print(
+        f"Serving live predictions from topic '{args.feature_topic}' to "
+        f"'{prediction_topic}' using model {args.model_dir}"
+    )
     try:
         for message in consumer:
+            processed_events += 1
             prediction = predictor.process_bucket_event(message.value)
             if prediction is None:
                 continue
-            print(json.dumps(prediction))
+            if not args.quiet:
+                print(json.dumps(prediction))
             if not args.stdout_only:
                 append_jsonl(args.output_file, prediction)
             producer.send(prediction_topic, prediction)
             producer.flush()
+            emitted_predictions += 1
     except KeyboardInterrupt:
         print("Stopping prediction service.")
     finally:
         consumer.close()
         producer.close()
+        print(
+            f"Processed {processed_events} feature windows and emitted "
+            f"{emitted_predictions} predictions"
+            + ("" if args.stdout_only else f" to {args.output_file}")
+        )
 
 
 if __name__ == "__main__":
