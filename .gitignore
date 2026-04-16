@@ -1,12 +1,25 @@
-live_data.csv
+# Python Virtual Environments
+.venv/
 .venv_tf/
 .venv311/
+__pycache__/
+
+# Data and Models (completely block all contents)
+data/
+models/
+*.keras
+*.h5
+live_data.csv
+
+# Logs and Temporaries
+logs/
 biglog/
 test_logs.txt
 test_verification.txt
-logs/
-.venv/
+
+# Notebooks and IDE
 .ipynb_checkpoints/
+<<<<<<< HEAD
 __pycache__/
 *.keras
 *.h5
@@ -18,3 +31,6 @@ models/failure_predictor/
 /plots
 *.pyc
 .pycache_tmp/
+=======
+plots/
+>>>>>>> a8204bc (Update gitignore and project scripts)
