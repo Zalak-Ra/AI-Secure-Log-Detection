@@ -95,8 +95,9 @@ python apps\serve_predictions.py --model-dir .\models\failure_predictor
 ```
 *(Leave this running)*
 
-> **Optional — Spark Streaming:** If you have Java 17 installed, you can use Apache Spark for live feature aggregation. Run this in its own terminal:
-> `spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.13:4.1.1 .\spark_jobs\feature_pipeline.py --bootstrap-servers localhost:9092`
+> **⚡ REQUIRED — Spark Streaming:** You MUST run Apache Spark for live AI feature aggregation to work! (Java 8+ required). Run this in its own terminal:
+> `spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 .\spark_jobs\feature_pipeline.py --bootstrap-servers localhost:9092`
+> *(Note: The very first batch may take ~10 minutes to process if there is a massive backlog of raw logs).*
 
 ---
 
@@ -122,23 +123,36 @@ python apps\serve_predictions.py --model-dir .\models\failure_predictor
 ```
 *(Leave this running)*
 
-> **Optional — Spark Streaming:** If you have Java 17 installed, run this in its own terminal:
-> `spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.13:4.1.1 .\spark_jobs\feature_pipeline.py --bootstrap-servers localhost:9092`
+> **⚡ REQUIRED — Spark Streaming:** You MUST run Apache Spark for live AI feature aggregation to work! (Java 8+ required). Run this in its own terminal:
+> `spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 .\spark_jobs\feature_pipeline.py --bootstrap-servers localhost:9092`
 
 ---
 
-## 📊 STEP LAST — Dashboards (Optional, applies to both walkthroughs)
+## 👀 Tracking Predictions Live (JSONL)
+
+To verify the AI model is actually predicting failures in real-time, open a new terminal and stream the output file directly to your screen:
+```powershell
+cd "C:\Users\Hp\Desktop\llm\big data\project_inter"
+Get-Content -Path .\data\predictions.jsonl -Wait -Tail 10
+```
+> **Offline Shortcut:** If Spark is extremely slow or stuck and you just want to blast the Kibana dashboard with predictions instantly, kill `serve_predictions.py` and run: `python apps\serve_predictions.py --model-dir .\models\failure_predictor --feature-file .\data\bootstrap_feature_windows.jsonl --output-file .\data\predictions.jsonl`
+
+---
+
+## 📊 STEP LAST — Visualize on ELK Stack (Kibana)
 
 ### Terminal: Elasticsearch (Database)
+**CRITICAL:** Ensure `xpack.security.enabled: false` is set inside `C:\elasticsearch\config\elasticsearch.yml` so you don't get password/HTTPS errors!
 ```powershell
-cd C:\elastic\elasticsearch
+cd C:\elasticsearch
 .\bin\elasticsearch.bat
 ```
 *(Leave this running)*
 
 ### Terminal: Kibana (Dashboard Web UI)
+**CRITICAL:** Ensure `C:\kibana\config\kibana.yml` has `elasticsearch.hosts: ["http://localhost:9200"]` and all security/password variables are commented out or deleted.
 ```powershell
-cd C:\elastic\kibana
+cd C:\kibana
 .\bin\kibana.bat
 ```
 *(Leave this running)*
@@ -147,14 +161,14 @@ cd C:\elastic\kibana
 ```powershell
 cd "C:\Users\Hp\Desktop\llm\big data\project_inter"
 
-# Install Index Templates
+# Install Index Templates (Will fail safely if ES Security wasn't disabled properly)
 curl.exe -X PUT "http://localhost:9200/_index_template/infra_predictions" -H "Content-Type: application/json" --data-binary "@elastic/predictions-template.json"
 curl.exe -X PUT "http://localhost:9200/_index_template/infra_feature_windows" -H "Content-Type: application/json" --data-binary "@elastic/feature-windows-template.json"
 
 # Start Logstash to stream predictions into Elasticsearch
-cd C:\elastic\logstash
+cd C:\logstash
 .\bin\logstash.bat -f "C:\Users\Hp\Desktop\llm\big data\project_inter\logstash\predictions.conf"
 ```
 *(Leave this running)*
 
-**Finish Line:** Open your browser and navigate to `http://localhost:5601` to view your Kibana dashboard!
+**Finish Line:** Open your browser and navigate to `http://localhost:5601`. (Give it 5-10 minutes to finish optimizing if it says "ERR_CONNECTION_REFUSED"). Click on the **Discover** or **Dashboards** tab to see your AI predictions live!

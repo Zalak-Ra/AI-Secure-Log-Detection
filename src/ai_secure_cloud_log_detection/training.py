@@ -88,7 +88,6 @@ def build_lstm_classifier(n_timesteps: int, n_features: int):
     model = tf.keras.Sequential(
         [
             tf.keras.layers.Input(shape=(n_timesteps, n_features)),
-            tf.keras.layers.Masking(mask_value=-1.0),
             tf.keras.layers.LSTM(64, return_sequences=True),
             tf.keras.layers.Dropout(0.2),
             tf.keras.layers.LSTM(32),
