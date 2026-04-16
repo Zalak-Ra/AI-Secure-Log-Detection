@@ -150,8 +150,6 @@ Together, these principles shift infrastructure monitoring away from reactive tr
 
 AI Secure Cloud Log Detection enables proactive infrastructure management by predicting failures before they occur. By combining synthetic telemetry, streaming data engineering, temporal feature construction, sequence modeling, and observability tooling, the system provides a practical foundation for early-warning monitoring in distributed environments.
 
-<<<<<<< HEAD
-=======
 Use Python `3.11` if you want the TensorFlow LSTM path. Python `3.14` can still run generation and feature engineering, but TensorFlow is not supported there.
 
 ### 1. Python environment
@@ -295,4 +293,3 @@ These steps were executed in the workspace:
 - TensorFlow on native Windows is CPU-only here.
 - Spark + Kafka + Elasticsearch were configured, but not launched inside this workspace session.
 - Real production quality still depends on richer host fleets, longer histories, and stricter evaluation on future time ranges.
->>>>>>> a8204bc (Update gitignore and project scripts)
